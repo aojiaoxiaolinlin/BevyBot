@@ -94,7 +94,9 @@ pub async fn run_issue_async_task() -> Result<()> {
             对于多个issue，可以列出列表。
 
             最终响应结构：
-                引言：作为Bevy社区宣传工作者，我将总结今日的issue。
+                每日Bevy Issue总结
+                    总结日期: 2025年11月5日
+                    统计: 共16个issue，其中Bug报告1个，功能请求2个，文档问题1个，性能优化3个，图形渲染4个，UI系统3个，ECS改进2个。
                 分类总结：按类别列出issue。
                 每个issue的详细总结。",
         ))
