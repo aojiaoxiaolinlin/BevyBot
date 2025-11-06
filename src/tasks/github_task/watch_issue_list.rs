@@ -9,10 +9,10 @@ use tokio_schedule::{Job, every};
 
 use crate::{
     bots::{
-        deepseek_client::build_deepseek_clienty, github_client::build_github_client,
+        deepseek_client::build_deepseek_client, github_client::build_github_client,
         qqbot_client::QQBotClient,
     },
-    tasks::github_task::{BEVY_REPO, BEYV_OWNER},
+    tasks::github_task::{BEVY_REPO, BEVY_OWNER},
 };
 
 pub fn get_new_issuse() -> Result<()> {
@@ -45,7 +45,7 @@ pub async fn run_issue_async_task() -> Result<()> {
         .unwrap();
 
     let issue_list = spider
-        .issues(BEYV_OWNER, BEVY_REPO)
+        .issues(BEVY_OWNER, BEVY_REPO)
         .list()
         .since(since)
         .send()
@@ -67,7 +67,7 @@ pub async fn run_issue_async_task() -> Result<()> {
         .collect::<Vec<_>>();
 
     // 发送到AI进行总结
-    let deepseek_client = build_deepseek_clienty()?;
+    let deepseek_client = build_deepseek_client()?;
 
     let mut chat_messages = vec![];
     chat_messages.push(
@@ -75,7 +75,7 @@ pub async fn run_issue_async_task() -> Result<()> {
             r"你是一个Bevy游戏引擎的社区宣传工作者，你需要根据用户提供的每日的issue列表信息进行分类总结，总结中需要包含issue的标题，内容，发布者名称，时间UTC，状态，原文链接，并进行翻译，对其中的游戏引擎底层原理、图形学等专业知识（术语）进行恰当的解释。
             示例issue：
             假设一个issue：
-            
+
             标题: Fix memory leak in ECS system
             内容: There is a memory leak when entities are despawned in the ECS. This causes the game to crash after prolonged play.
             发布者: john_doe
@@ -149,7 +149,7 @@ mod tests {
     use dotenvy::dotenv;
 
     use crate::tasks::github_task::{
-        BEVY_REPO, BEYV_OWNER, watch_issue_list::run_issue_async_task,
+        BEVY_REPO, BEVY_OWNER, watch_issue_list::run_issue_async_task,
     };
 
     #[tokio::test]
@@ -167,7 +167,7 @@ mod tests {
             .unwrap();
 
         let issue_list = spider
-            .issues(BEYV_OWNER, BEVY_REPO)
+            .issues(BEVY_OWNER, BEVY_REPO)
             .list()
             // .since(since)
             .page(0_u32)

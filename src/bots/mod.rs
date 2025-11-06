@@ -4,6 +4,7 @@ use log::*;
 
 pub mod qqbot_client;
 pub mod qqbot_github_impl;
+pub mod qqbot_channel_impl;
 pub mod deepseek_client;
 pub mod github_client;
 
