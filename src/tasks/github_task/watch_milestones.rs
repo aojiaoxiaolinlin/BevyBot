@@ -51,7 +51,7 @@ pub async fn get_changed_milestone(
 
     for milestone in milestone_list {
         let milestone_title = milestone.title;
-        let milestone_id = milestone.id;
+        let milestone_id = milestone.number;
 
         // 是否需要创建里程碑子频道
         let sub_channel_name = get_channel_name(&milestone_title);
@@ -81,7 +81,7 @@ pub async fn get_changed_milestone(
                 .issues(BEVY_OWNER, BEVY_REPO)
                 .list()
                 .state(octocrab::params::State::All)
-                .milestone(*milestone_id)
+                .milestone(milestone_id as u64)
                 .page(cur_page)
                 .per_page(MAX_PER_PAGE)
                 .send()
@@ -248,7 +248,7 @@ fn get_channel_name(
 
 #[cfg(test)]
 mod tests {
-    use crate::{bots::github_client::build_github_client, tasks::github_task::watch_milestones::get_milestone_list};
+    use crate::{bots::github_client::build_github_client, tasks::github_task::{BEVY_OWNER, BEVY_REPO, watch_milestones::get_milestone_list}};
 
     #[tokio::test]
     async fn test_get_milestone_list() {
@@ -258,7 +258,21 @@ mod tests {
         let list = get_milestone_list(&spider).await.unwrap();
         // println!("{:?}", list);
         for item in list {
-            println!("版本: {}, id: {}", item.title, item.id)
+            println!("版本: {}, id: {}", item.title, item.id);
+            println!("{:?}", item);
+
+            // let issue_list = spider
+            //     .issues(BEVY_OWNER, BEVY_REPO)
+            //     .list()
+            //     .state(octocrab::params::State::All)
+            //     .milestone(35)
+            //     .page(0_u32)
+            //     .per_page(100)
+            //     .send()
+            //     .await
+            //     .unwrap();
+            // ;
+            // println!("总issue: {:?}", issue_list.items.len());
         }
     }
 }
