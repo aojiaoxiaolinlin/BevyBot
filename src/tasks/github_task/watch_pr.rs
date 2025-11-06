@@ -1,9 +1,9 @@
 use crate::{
     bots::{
-        deepseek_client::build_deepseek_clienty, github_client::build_github_client,
+        deepseek_client::build_deepseek_client, github_client::build_github_client,
         qqbot_client::QQBotClient,
     },
-    tasks::github_task::{BEVY_REPO, BEYV_OWNER},
+    tasks::github_task::{BEVY_REPO, BEVY_OWNER},
 };
 use actix_rt::spawn;
 use anyhow::Result;
@@ -27,7 +27,7 @@ pub fn get_new_commits() -> Result<()> {
             let since = Local::now().to_utc().checked_sub_days(Days::new(1)).unwrap();
 
             let issue_list = spider
-                .repos(BEYV_OWNER, BEVY_REPO)
+                .repos(BEVY_OWNER, BEVY_REPO)
                 .list_commits()
                 .since(since)
                 .send()
@@ -35,7 +35,7 @@ pub fn get_new_commits() -> Result<()> {
                 .unwrap();
 
             // 发送到AI进行总结
-            let deepseek_client = build_deepseek_clienty().unwrap();
+            let deepseek_client = build_deepseek_client().unwrap();
 
             let mut all_issue = issue_list.into_iter().map(|issue| {
                 MessageRequest::user(
@@ -93,7 +93,7 @@ pub fn get_new_commits() -> Result<()> {
 mod tests {
     use dotenvy::dotenv;
 
-    use crate::tasks::github_task::{BEVY_REPO, BEYV_OWNER};
+    use crate::tasks::github_task::{BEVY_REPO, BEVY_OWNER};
 
     #[tokio::test]
     async fn test_issue_list() {
@@ -110,7 +110,7 @@ mod tests {
             .unwrap();
 
         let issue_list = spider
-            .issues(BEYV_OWNER, BEVY_REPO)
+            .issues(BEVY_OWNER, BEVY_REPO)
             .list()
             // .since(since)
             .page(0_u32)
