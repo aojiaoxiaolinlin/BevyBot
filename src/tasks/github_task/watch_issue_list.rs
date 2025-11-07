@@ -20,7 +20,7 @@ pub fn get_new_issuse() -> Result<()> {
 
     // let mut now = Local::now().to_utc();
 
-    let every_day_task = every(1).day().at(13, 00, 00).perform(|| async {
+    let every_day_task = every(1).day().at(12, 00, 00).perform(|| async {
         match run_issue_async_task().await {
             Ok(_) => (),
             Err(err) => {
@@ -86,7 +86,7 @@ pub async fn run_issue_async_task() -> Result<()> {
             时间: 2023-10-05T12:00:00Z
             状态: open
             链接: https://github.com/bevyengine/bevy/issues/1234
-            
+
             总结：
             标题: 修复ECS系统中的内存泄漏（翻译）
             内容: 当实体在ECS中被销毁时，存在内存泄漏问题，导致游戏在长时间运行后崩溃。（翻译和详细解释）

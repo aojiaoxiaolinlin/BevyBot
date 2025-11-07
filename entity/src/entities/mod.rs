@@ -2,4 +2,5 @@
 
 pub mod prelude;
 
+pub mod merge_train;
 pub mod milestone_post;

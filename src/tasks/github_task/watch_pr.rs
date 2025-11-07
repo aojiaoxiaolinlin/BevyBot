@@ -20,7 +20,7 @@ pub fn get_new_commits() -> Result<()> {
 
     // let mut now = Local::now().to_utc();
 
-    let every_day_task = every(1).day().at(13, 00, 00)
+    let every_day_task = every(1).day().at(12, 00, 00)
         .perform(|| async {
             let spider = build_github_client().unwrap();
 

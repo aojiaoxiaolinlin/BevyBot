@@ -29,7 +29,7 @@ pub struct AppState {
 #[cfg(not(target_env = "msvc"))]
 use tikv_jemallocator::Jemalloc;
 
-use crate::tasks::github_task::{watch_issue_list::get_new_issuse, watch_milestones::spawn_milestone_task, watch_pr::get_new_commits};
+use crate::tasks::{bsky_task::watch_mergetrain_feed::spawn_mergetrain_task, github_task::{watch_issue_list::get_new_issuse, watch_milestones::spawn_milestone_task, watch_pr::get_new_commits}};
 
 #[cfg(not(target_env = "msvc"))]
 #[global_allocator]
@@ -72,6 +72,7 @@ async fn main() -> std::io::Result<()> {
     get_new_issuse().unwrap();
     get_new_commits().unwrap();
     spawn_milestone_task(app_state.clone()).unwrap();
+    spawn_mergetrain_task(app_state.clone());
 
     HttpServer::new(move || {
         let cors = Cors::permissive();

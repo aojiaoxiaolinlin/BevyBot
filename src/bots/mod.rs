@@ -7,6 +7,7 @@ pub mod qqbot_github_impl;
 pub mod qqbot_channel_impl;
 pub mod deepseek_client;
 pub mod github_client;
+pub mod bsky_client;
 
 // 定义机器人的事件处理器
 struct MyBot;
