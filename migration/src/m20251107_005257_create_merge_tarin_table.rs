@@ -13,7 +13,7 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(pk_auto(MergeTrain::Id))
                     .col(string(MergeTrain::Title))
-                    .col(string_len(MergeTrain::Cid, 2048))
+                    .col(string(MergeTrain::Cid))
                     .to_owned(),
             )
             .await?;
