@@ -2,7 +2,8 @@ use actix_rt::spawn;
 use anyhow::Result;
 use chrono::{Days, Local};
 use deepseek_api::{
-    CompletionsRequestBuilder, RequestBuilder, request::MessageRequest, response::AssistantMessage,
+    CompletionsRequestBuilder, RequestBuilder,
+    request::{MessageRequest, SystemMessageRequest},
 };
 use log::{error, info};
 use tokio_schedule::{Job, every};
@@ -15,7 +16,7 @@ use crate::{
     tasks::github_task::{BEVY_OWNER, BEVY_REPO},
 };
 
-pub fn get_new_issuse() -> Result<()> {
+pub fn get_new_issues() -> Result<()> {
     info!("开始定时抓取issue任务");
 
     // let mut now = Local::now().to_utc();
@@ -61,7 +62,7 @@ pub async fn run_issue_async_task() -> Result<()> {
                 issue.user.name,
                 issue.created_at,
                 issue.state,
-                issue.html_url.to_string()
+                issue.html_url
             )
         })
         .collect::<Vec<_>>();
@@ -73,9 +74,8 @@ pub async fn run_issue_async_task() -> Result<()> {
     // 发送到AI进行总结
     let deepseek_client = build_deepseek_client()?;
 
-    let mut chat_messages = vec![];
-    chat_messages.push(
-        MessageRequest::Assistant(AssistantMessage::new(
+    let chat_messages = vec![
+        MessageRequest::System(SystemMessageRequest::new(
             r"你是一个Bevy游戏引擎的社区宣传工作者，你需要根据用户提供的每日的issue列表信息进行分类总结，总结中需要包含issue的标题，内容，发布者名称，时间UTC，状态，原文链接，并进行翻译，对其中的游戏引擎底层原理、图形学等专业知识（术语）进行恰当的解释，挑选比较难的，常用的、都比较了解的略过。
             示例issue：
             假设一个issue：
@@ -102,9 +102,9 @@ pub async fn run_issue_async_task() -> Result<()> {
                     总结日期: {{}}年{{}}月{{}}日
                     统计: 共{{}}个issue,每类多少个。
                 详细报告：以类别为一个标题开始罗列每个issue的详细信息。分类可以加上Unicode图标。",
-        ))
-    );
-    chat_messages.push(MessageRequest::user(&issue_main_message.join("\n")));
+        )),
+        MessageRequest::user(&issue_main_message.join("\n")),
+    ];
 
     info!("开始请求AI总结");
 

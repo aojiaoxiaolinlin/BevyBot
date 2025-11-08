@@ -1,13 +1,11 @@
-use std::{
-    future::{ready, Ready}
-};
+use std::future::{Ready, ready};
 
 use actix_web::{
+    Error, HttpMessage, HttpResponse,
     body::EitherBody,
     dev::{self, Service, ServiceRequest, ServiceResponse, Transform},
     http::header::HeaderValue,
     web::Data,
-    Error, HttpMessage, HttpResponse,
 };
 use futures_util::future::{LocalBoxFuture, ok};
 use log::error;
@@ -50,15 +48,14 @@ where
     dev::forward_ready!(service);
 
     fn call(&self, request: ServiceRequest) -> Self::Future {
-        #[cfg(debug_assertions)]
-        {
+        if cfg!(debug_assertions) {
             // 测试跳过验证
             request.extensions_mut().insert(1i32);
             let res = self.service.call(request);
             return Box::pin(async move {
                 // forwarded responses map to "left" body
                 res.await.map(ServiceResponse::map_into_left_body)
-            })
+            });
         }
 
         let (request, is_login) = check_login(request);
@@ -69,12 +66,8 @@ where
                 res.await.map(ServiceResponse::map_into_left_body)
             })
         } else {
-            let response = HttpResponse::Unauthorized()
-                .finish()
-                .map_into_right_body();
-            Box::pin(
-                ok(request.into_response(response))
-            )
+            let response = HttpResponse::Unauthorized().finish().map_into_right_body();
+            Box::pin(ok(request.into_response(response)))
         }
     }
 }

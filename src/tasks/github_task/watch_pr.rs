@@ -3,7 +3,7 @@ use crate::{
         deepseek_client::build_deepseek_client, github_client::build_github_client,
         qqbot_client::QQBotClient,
     },
-    tasks::github_task::{BEVY_REPO, BEVY_OWNER},
+    tasks::github_task::{BEVY_OWNER, BEVY_REPO},
 };
 use actix_rt::spawn;
 use anyhow::Result;
@@ -56,32 +56,27 @@ pub fn get_new_commits() -> Result<()> {
                 .do_request(&deepseek_client)
                 .await;
 
-            if let Ok(res) = res {
-                if let Some(choice) = res.must_response().choices.first() {
-                    if let Some(message) = &choice.message {
-                        if !message.content.is_empty() {
-                            // 发送到频道
-                            let qq_client = match QQBotClient::new_with_default(false).await {
-                                Ok(qq_client) => qq_client,
-                                Err(err) => {
-                                    error!("{err:?}");
-                                    return ;
-                                }
-                            };
-
-                            match qq_client.send_commit_summary("Commits", &message.content).await {
-                                Ok(_) => (),
-                                Err(err) => {
-                                    error!("{err:?}");
-                                }
-                            };
-
-
+            if let Ok(res) = res 
+                && let Some (choice) = res.must_response().choices.first() 
+                && let Some(message) = &choice.message 
+                && !message.content.is_empty() {
+                    // 发送到频道
+                    let qq_client = match QQBotClient::new_with_default(false).await {
+                        Ok(qq_client) => qq_client,
+                        Err(err) => {
+                            error!("{err:?}");
+                            return ;
                         }
-                    }
-                }
-            }
+                    };
 
+                    match qq_client.send_commit_summary("Commits", &message.content).await {
+                        Ok(_) => (),
+                        Err(err) => {
+                            error!("{err:?}");
+                        }
+                    };
+                
+            }
         });
 
     spawn(every_day_task);
@@ -93,7 +88,7 @@ pub fn get_new_commits() -> Result<()> {
 mod tests {
     use dotenvy::dotenv;
 
-    use crate::tasks::github_task::{BEVY_REPO, BEVY_OWNER};
+    use crate::tasks::github_task::{BEVY_OWNER, BEVY_REPO};
 
     #[tokio::test]
     async fn test_issue_list() {
