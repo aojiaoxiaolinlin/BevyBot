@@ -4,6 +4,7 @@ use log::*;
 
 pub mod watch_issue_list;
 pub mod watch_milestones;
+pub mod watch_commits;
 pub mod watch_pr;
 
 // const BEVY_GITHUB: &str = "https://github.com/bevyengine/bevy";

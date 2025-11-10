@@ -91,7 +91,7 @@ mod tests {
         dotenv().ok();
         env_logger::init();
 
-        let qq_client = QQBotClient::new_with_default(false).await.unwrap();
+        let qq_client = QQBotClient::new_with_default(true).await.unwrap();
 
         let sub_channel = qq_client.get_sub_channels().await.unwrap();
 

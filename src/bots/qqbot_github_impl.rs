@@ -61,4 +61,23 @@ impl QQBotClient {
         Ok(())
     }
 
+    pub async fn send_pr_summary(&self, title: &str, text: &String) -> Result<()> {
+        let title = format!("每日 {} 总结：{}", title, Local::now().format("%Y-%m-%d"));
+
+        let res: serde_json::Value = self.put(
+            format!("/channels/{}/threads", env::var("PR_CHANNEL_ID").unwrap_or_default()),
+            json!({
+                "title": title,
+                "content": text,
+                "format": 3
+            })
+        )
+        .await
+        ?;
+
+        info!("{:?}", res);
+
+        Ok(())
+    }
+
 }

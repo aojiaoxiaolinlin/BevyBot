@@ -51,6 +51,10 @@ pub async fn run_issue_async_task() -> Result<()> {
         .send()
         .await?;
 
+    if issue_list.items.is_empty() {
+        anyhow::bail!("今日Issues为空");
+    }
+
     let issue_main_message = issue_list
         .into_iter()
         .map(|issue| {
@@ -93,7 +97,7 @@ pub async fn run_issue_async_task() -> Result<()> {
             发布者: john_doe
             时间: 2023-10-05 12:00:00 UTC
             状态: 开启
-            链接:  [GitHub Issue #xxxx]
+            链接:  [GitHub Issue #xxxx](原文链接)
             术语解释: ECS（Entity-Component-System）是一种游戏开发架构，用于管理游戏对象（实体）及其属性（组件）和行为（系统）。内存泄漏是指程序在分配内存后未能释放，导致内存使用不断增加。
             对于多个issue，可以列出列表。
 
